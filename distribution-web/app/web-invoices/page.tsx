@@ -1,0 +1,6 @@
+'use client';
+import {useEffect,useState} from 'react';
+import Link from 'next/link';
+const API=process.env.NEXT_PUBLIC_API_URL??'http://localhost:5000';
+type Invoice={id:number;invoice_no:string;created_at:string;customer_id:string;section_id:string;grand_total:string;cash_amount:string;cheque_amount:string;credit_amount:string};
+export default function WebInvoices(){const [rows,setRows]=useState<Invoice[]>([]),[error,setError]=useState('');useEffect(()=>{fetch(`${API}/api/web-sales`,{credentials:'include'}).then(r=>{if(!r.ok)throw Error(`HTTP ${r.status}`);return r.json()}).then(setRows).catch(e=>setError(e.message));},[]);return <main className="page"><h1>Web Invoice History</h1><p><Link href="/pos/web-sale">New Web Invoice</Link></p>{error&&<p role="alert">{error}</p>}<div style={{overflowX:'auto'}}><table style={{width:'100%',minWidth:600,textAlign:'left'}}><thead><tr><th>Invoice</th><th>Date</th><th>Customer</th><th>Section</th><th>Total</th><th>Cash</th><th>Cheque</th><th>Credit</th></tr></thead><tbody>{rows.map(x=><tr key={x.id}><td>{x.invoice_no}</td><td>{new Date(x.created_at).toLocaleString()}</td><td>{x.customer_id}</td><td>{x.section_id}</td><td>{x.grand_total}</td><td>{x.cash_amount}</td><td>{x.cheque_amount}</td><td>{x.credit_amount}</td></tr>)}</tbody></table></div></main>}
